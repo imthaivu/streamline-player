@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎧 Streamline Player</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+
+      .container {
+        max-width: 480px;
+        margin: auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      h2 {
+        text-align: center;
+        font-size: 20px;
+        margin-bottom: 16px;
+      }
+
+      .book-buttons,
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        margin-bottom: 12px;
+      }
+
+      button {
+        padding: 10px 10px;
+        font-size: 13px;
+        border: none;
+        border-radius: 50%;
+        background: #e0e0e0;
+        cursor: pointer;
+        transition: 0.2s ease-in-out;
+      }
+
+      button:hover {
+        background: #d0d0d0;
+      }
+
+      button.active {
+        background: #007aff;
+        color: white;
+        font-weight: bold;
+      }
+
+      .audio-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      audio {
+        flex-grow: 1;
+      }
+
+      .rewind-btn {
+        background: #007aff;
+        color: white;
+        border-radius: 30px;
+
+        font-size: 14px;
+      }
+
+      .speed-toggle {
+        border-radius: 30px;
+        background: #ffeaa7;
+        color: #2d3436;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 10px;
+        border: none;
+        cursor: pointer;
+      }
+
+      .speed-toggle .icon {
+        font-size: 16px;
+      }
+
+      .speed-toggle .value {
+        color: #555;
+        font-size: 12px;
+      }
+      .custom-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 16px;
+        justify-content: center;
+      }
+      #playBtn {
+        background: #4cd964;
+        color: white;
+        font-size: 16px;
+        width: 40px;
+        height: 40px;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      #progress {
+        flex-grow: 1;
+        height: 6px;
+        border-radius: 5px;
+        accent-color: #007aff;
+        min-width: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>🎧 Streamline Listening</h2>
+
+      <div class="book-buttons">
+        <button onclick="selectBook(1)">Book 1</button>
+        <button onclick="selectBook(2)">Book 2</button>
+        <button onclick="selectBook(3)">Book 3</button>
+        <button onclick="selectBook(4)">Book 4</button>
+      </div>
+
+      <div id="fileButtons"></div>
+
+      <div class="audio-row">
+        <button class="rewind-btn" onclick="seekAudio(-5)">⏪ 5s</button>
+
+        <audio id="audio" preload="auto"></audio>
+
+        <button id="playBtn">▶️</button>
+
+        <input
+          type="range"
+          id="progress"
+          value="0"
+          min="0"
+          max="100"
+          step="0.1"
+        />
+
+        <button class="speed-toggle" onclick="toggleSpeed()" id="speedBtn">
+          <span class="icon" id="speedIcon">🐇</span>
+          <span id="speedValue" class="value">1x</span>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const fileButtonsContainer = document.getElementById("fileButtons");
+      const audio = document.getElementById("audio");
+      const speedIcon = document.getElementById("speedIcon");
+      const speedValue = document.getElementById("speedValue");
+
+      let currentBook = 1;
+      let currentIndex = 0;
+
+      const audioFiles = {
+        1: Array.from({ length: 80 }, (_, i) => i + 1)
+          .filter((i) => ![3, 20, 40, 53, 60, 68, 70, 76, 78, 80].includes(i))
+          .map((i) => `streamline1/${String(i).padStart(2, "0")}.mp3`),
+
+        2: Array.from({ length: 80 }, (_, i) => i + 1)
+          .filter((i) => ![8, 24, 45, 53, 59, 67, 72, 78, 80].includes(i))
+          .map((i) => `streamline2/${String(i).padStart(2, "0")}.mp3`),
+
+        3: Array.from({ length: 80 }, (_, i) => i + 1)
+          .filter(
+            (i) =>
+              ![
+                6, 8, 14, 26, 30, 33, 41, 48, 49, 50, 55, 58, 61, 64, 66, 68,
+                69, 70, 73, 79,
+              ].includes(i)
+          )
+          .map((i) => `streamline3/${String(i).padStart(2, "0")}.mp3`),
+
+        4: Array.from({ length: 60 }, (_, i) => i + 1)
+          .filter(
+            (i) =>
+              ![
+                5, 8, 9, 12, 14, 18, 23, 27, 29, 30, 32, 35, 37, 38, 41, 43, 44,
+                46, 48, 51, 53, 56, 60,
+              ].includes(i)
+          )
+          .map((i) => `streamline4/${String(i).padStart(2, "0")}.mp3`),
+      };
+
+      function selectBook(bookNum) {
+        currentBook = bookNum;
+        localStorage.setItem("lastBook", bookNum);
+        renderBookButtons(bookNum);
+        renderFileButtons(bookNum);
+        loadLastAudio();
+      }
+
+      function renderBookButtons(activeBook) {
+        document
+          .querySelectorAll(".book-buttons button")
+          .forEach((btn, idx) => {
+            btn.classList.toggle("active", idx + 1 === activeBook);
+          });
+      }
+
+      function renderFileButtons(bookNumber) {
+        fileButtonsContainer.innerHTML = "";
+        const files = audioFiles[bookNumber];
+
+        let displayedIndex = 0;
+        for (let i = 0; i < files.length; i += 10) {
+          const row = document.createElement("div");
+          row.className = "button-row";
+          for (let j = i; j < i + 10 && j < files.length; j++) {
+            const btn = document.createElement("button");
+
+            // Lấy tên file và trích số gốc từ tên file
+            const fileName = files[j];
+            const labelMatch = fileName.match(/(\d{2})\.mp3$/);
+            const label = labelMatch ? String(Number(labelMatch[1])) : j + 1;
+
+            btn.textContent = label;
+            btn.onclick = () => playAudio(j);
+            row.appendChild(btn);
+          }
+          fileButtonsContainer.appendChild(row);
+        }
+      }
+
+      function updateActiveButton(index) {
+        document.querySelectorAll(".button-row button").forEach((btn, idx) => {
+          btn.classList.toggle("active", idx === index);
+        });
+      }
+
+      function playAudio(index) {
+        currentIndex = index;
+        const file = audioFiles[currentBook][index];
+        audio.src = file;
+        audio.play();
+        updateActiveButton(index);
+        saveLastAudio();
+      }
+
+      function seekAudio(seconds) {
+        audio.currentTime += seconds;
+      }
+
+      function toggleSpeed() {
+        if (audio.playbackRate === 1) {
+          audio.playbackRate = 0.75;
+          speedIcon.textContent = "🐢";
+          speedValue.textContent = "0.75x";
+        } else {
+          audio.playbackRate = 1;
+          speedIcon.textContent = "🐇";
+          speedValue.textContent = "1x";
+        }
+      }
+
+      function saveLastAudio() {
+        localStorage.setItem(
+          "lastAudio",
+          JSON.stringify({ book: currentBook, index: currentIndex })
+        );
+      }
+
+      function loadLastAudio() {
+        const saved = localStorage.getItem("lastAudio");
+        if (saved) {
+          const { book, index } = JSON.parse(saved);
+          if (book === currentBook) playAudio(index);
+        } else {
+          playAudio(0);
+        }
+      }
+
+      selectBook(Number(localStorage.getItem("lastBook") || 1));
+
+      const playBtn = document.getElementById("playBtn");
+      const progress = document.getElementById("progress");
+
+      playBtn.onclick = () => {
+        if (audio.paused) {
+          audio.play();
+          playBtn.textContent = "⏸️";
+        } else {
+          audio.pause();
+          playBtn.textContent = "▶️";
+        }
+      };
+
+      audio.addEventListener("timeupdate", () => {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        progress.value = percent || 0;
+      });
+
+      progress.addEventListener("input", () => {
+        const percent = progress.value;
+        audio.currentTime = (percent / 100) * audio.duration;
+      });
+
+      audio.addEventListener("ended", () => {
+        playBtn.textContent = "▶️";
+      });
+    </script>
+  </body>
+</html>
+
+<!-- quyen 1 co 80 bai nhung thieu: 3,20, 40, 53,60,68 70 76 78 80 -->
+<!-- quyen 2 co 80 bai nhung thieu: 8,24 45 53 59 67 72 78 80 -->
+<!-- quyen 3 co 80 bai nhung thieu: 6 8 14 26 30 33 41 48 49 50 55 58 61 64 66 68 69 70 73 79  -->
+<!-- quyen 4 chi co 60 bai thoi ma bi thieu mat cac bai sau: 5 8 9 12 14 18 23 27 29 30 32 35 37 38 41 43 44 46 48 51 53 56 60 -->
