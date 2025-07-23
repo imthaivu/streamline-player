@@ -36,9 +36,16 @@
         justify-content: center;
         margin-bottom: 12px;
       }
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        margin-bottom: 12px;
+      }
 
       button {
-        padding: 10px 10px;
+        padding: 8px;
         font-size: 13px;
         border: none;
         border-radius: 50%;
@@ -222,24 +229,21 @@
         fileButtonsContainer.innerHTML = "";
         const files = audioFiles[bookNumber];
 
-        let displayedIndex = 0;
-        for (let i = 0; i < files.length; i += 10) {
-          const row = document.createElement("div");
-          row.className = "button-row";
-          for (let j = i; j < i + 10 && j < files.length; j++) {
-            const btn = document.createElement("button");
+        const row = document.createElement("div");
+        row.className = "button-row";
 
-            // Lấy tên file và trích số gốc từ tên file
-            const fileName = files[j];
-            const labelMatch = fileName.match(/(\d{2})\.mp3$/);
-            const label = labelMatch ? String(Number(labelMatch[1])) : j + 1;
+        files.forEach((file, i) => {
+          const btn = document.createElement("button");
 
-            btn.textContent = label;
-            btn.onclick = () => playAudio(j);
-            row.appendChild(btn);
-          }
-          fileButtonsContainer.appendChild(row);
-        }
+          const labelMatch = file.match(/(\d{2})\.mp3$/);
+          const label = labelMatch ? String(Number(labelMatch[1])) : i + 1;
+
+          btn.textContent = label;
+          btn.onclick = () => playAudio(i);
+          row.appendChild(btn);
+        });
+
+        fileButtonsContainer.appendChild(row);
       }
 
       function updateActiveButton(index) {
