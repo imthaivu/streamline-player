@@ -131,6 +131,13 @@
         accent-color: #007aff;
         min-width: 100px;
       }
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid white;
+      }
     </style>
   </head>
   <body>
@@ -166,6 +173,28 @@
           <span class="icon" id="speedIcon">🐇</span>
           <span id="speedValue" class="value">1x</span>
         </button>
+      </div>
+      <div id="leaderboard" class="daily-leaderboard">
+        <div class="rank rank-1">
+          <div class="medal">🥇 Người bản xứ</div>
+          <div class="avatars">
+            <img src="img-user/loan.jpg" class="avatar" />
+          </div>
+        </div>
+
+        <div class="rank rank-2">
+          <div class="medal">🥈 Cũng rất là bản xứ á</div>
+          <div class="avatars">
+            <img src="img-user/lan.jpg" class="avatar" />
+          </div>
+        </div>
+
+        <div class="rank rank-3">
+          <div class="medal">🥉 Tại nay hơi lười thôi cưng 😅</div>
+          <div class="avatars">
+            <img src="img-user/hoa.jpg" class="avatar" />
+          </div>
+        </div>
       </div>
     </div>
 
