@@ -174,7 +174,68 @@
           <span id="speedValue" class="value">1x</span>
         </button>
       </div>
-      <div id="leaderboard" class="daily-leaderboard"></div>
+      <div id="milestones" style="margin: 10px 0">
+        <div
+          style="
+            position: relative;
+            height: 20px;
+            background: #eee;
+            border-radius: 5px;
+            margin-left: 50px;
+          "
+        >
+          <div
+            style="
+              position: absolute;
+              left: 20%;
+              top: 50%;
+              transform: translate(-50%, -50%);
+              font-size: 10px;
+              color: #888;
+            "
+          >
+            50🔥
+          </div>
+          <div
+            style="
+              position: absolute;
+              left: 40%;
+              top: 50%;
+              transform: translate(-50%, -50%);
+              font-size: 10px;
+              color: #888;
+            "
+          >
+            100🔥
+          </div>
+          <div
+            style="
+              position: absolute;
+              left: 75%;
+              top: 50%;
+              transform: translate(-50%, -50%);
+              font-size: 10px;
+              color: #888;
+            "
+          >
+            200🔥
+          </div>
+          <div
+            style="
+              position: absolute;
+              right: 0%;
+              top: 50%;
+              transform: translate(-50%, -50%);
+              font-size: 10px;
+              color: #888;
+            "
+          >
+            250🔥
+          </div>
+        </div>
+      </div>
+
+      <div id="leaderboard"></div>
     </div>
 
     <script>
@@ -345,15 +406,10 @@
           const slugName = toSlug(user.name);
           const avatarSrc = `img-user/${slugName}.jpg`;
 
-          const rankDiv = document.createElement("div");
-          rankDiv.className = "rank";
-          rankDiv.style.display = "flex";
-          rankDiv.style.alignItems = "center";
-          rankDiv.style.border = "1px solid #eee";
-          rankDiv.style.borderRadius = "8px";
-          rankDiv.style.padding = "8px 12px";
-          rankDiv.style.marginBottom = "8px";
-          rankDiv.style.background = "#fafafa";
+          const container = document.createElement("div");
+          container.style.display = "flex";
+          container.style.alignItems = "center";
+          container.style.marginBottom = "12px";
 
           const avatar = document.createElement("img");
           avatar.src = avatarSrc;
@@ -364,15 +420,48 @@
           avatar.style.marginRight = "12px";
           avatar.style.objectFit = "cover";
 
-          const infoDiv = document.createElement("div");
-          infoDiv.innerHTML = `
-      <div><strong>${user.name}</strong></div>
-      <div style="font-size: 0.9em; color: #666;">🔥 ${user.streak} ngày • 💰 ${user.coins}</div>
-    `;
+          const content = document.createElement("div");
+          content.style.flexGrow = "1";
 
-          rankDiv.appendChild(avatar);
-          rankDiv.appendChild(infoDiv);
-          lb.appendChild(rankDiv);
+          const nameDiv = document.createElement("div");
+          nameDiv.innerHTML = `<strong>${user.name}</strong> • 💰${user.coins}`;
+          nameDiv.style.marginBottom = "4px";
+
+          const barContainer = document.createElement("div");
+          barContainer.style.background = "#eee";
+          barContainer.style.height = "10px";
+          barContainer.style.borderRadius = "5px";
+          barContainer.style.overflow = "hidden";
+          barContainer.style.position = "relative";
+          barContainer.style.marginBottom = "4px";
+          barContainer.style.width = "100%";
+
+          const barFill = document.createElement("div");
+          const percent = Math.min((user.coins / 250) * 100, 100);
+          barFill.style.width = `${percent}%`;
+          barFill.style.height = "100%";
+          barFill.style.background = "linear-gradient(to right, orange, red)";
+          barFill.style.transition = "width 0.3s";
+
+          const label = document.createElement("div");
+          label.innerHTML = `🔥 ${user.streak}`;
+          label.style.position = "absolute";
+          label.style.left = "5px";
+          label.style.top = "-18px";
+          label.style.fontSize = "12px";
+          label.style.color = "#e17055";
+          label.style.fontWeight = "600";
+
+          barContainer.appendChild(barFill);
+          barContainer.appendChild(label);
+
+          content.appendChild(nameDiv);
+          content.appendChild(barContainer);
+
+          container.appendChild(avatar);
+          container.appendChild(content);
+
+          lb.appendChild(container);
         });
       }
 
