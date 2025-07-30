@@ -1,0 +1,133 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  color: #333;
+}
+
+.container {
+  max-width: 480px;
+  margin: auto;
+  padding: 10px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+h2 {
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.book-buttons,
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+button {
+  padding: 8px;
+  font-size: 13px;
+  border: none;
+  border-radius: 50%;
+  background: #e0e0e0;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+button:hover {
+  background: #d0d0d0;
+}
+
+button.active {
+  background: #007aff;
+  color: white;
+  font-weight: bold;
+}
+
+.audio-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+audio {
+  flex-grow: 1;
+}
+
+.rewind-btn {
+  background: #007aff;
+  color: white;
+  border-radius: 30px;
+
+  font-size: 14px;
+}
+
+.speed-toggle {
+  border-radius: 30px;
+  background: #ffeaa7;
+  color: #2d3436;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.speed-toggle .icon {
+  font-size: 16px;
+}
+
+.speed-toggle .value {
+  color: #555;
+  font-size: 12px;
+}
+.custom-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: center;
+}
+#playBtn {
+  background: #4cd964;
+  color: white;
+  font-size: 16px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#progress {
+  flex-grow: 1;
+  height: 6px;
+  border-radius: 5px;
+  accent-color: #007aff;
+  min-width: 100px;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
