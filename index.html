@@ -156,7 +156,7 @@
       <div class="audio-row">
         <button class="rewind-btn" onclick="seekAudio(-5)">⏪ 5s</button>
 
-        <audio id="audio" preload="auto"></audio>
+        <audio id="audio" preload="none"></audio>
 
         <button id="playBtn">▶️</button>
 
@@ -350,10 +350,22 @@
       }
 
       function playAudio(index) {
+        if (currentIndex === index && !audio.paused) return;
+
         currentIndex = index;
         const file = audioFiles[currentBook][index];
-        audio.src = file;
-        audio.play();
+
+        // Reset tốc độ về 1x
+        audio.playbackRate = 1;
+        speedIcon.textContent = "🐇";
+        speedValue.textContent = "1x";
+
+        if (audio.src !== location.origin + "/" + file) {
+          audio.src = file;
+          audio.load(); // ép load lại nếu đổi file
+        }
+
+        audio.play(); // chỉ tải file khi thực sự play
         updateActiveButton(index);
         saveLastAudio();
       }
@@ -515,14 +527,15 @@
       renderLeaderboardFromSheet();
 
       playBtn.onclick = () => {
-        if (audio.paused) {
-          audio.play();
-          playBtn.textContent = "⏸️";
-        } else {
-          audio.pause();
-          playBtn.textContent = "▶️";
-        }
+        if (audio.paused) audio.play();
+        else audio.pause();
       };
+      audio.addEventListener("play", () => {
+        playBtn.textContent = "⏸️";
+      });
+      audio.addEventListener("pause", () => {
+        playBtn.textContent = "▶️";
+      });
 
       audio.addEventListener("timeupdate", () => {
         const percent = (audio.currentTime / audio.duration) * 100;
