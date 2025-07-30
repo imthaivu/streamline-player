@@ -174,14 +174,19 @@
           <span id="speedValue" class="value">1x</span>
         </button>
       </div>
-      <div id="milestones" style="margin: 10px 0">
+      <div
+        id="milestones"
+        style="margin: 10px 0; display: flex; align-items: center"
+      >
+        <img src="img-ui/shoppee.jpg" alt="" width="40" />
+
         <div
           style="
             position: relative;
             height: 20px;
             background: #eee;
             border-radius: 5px;
-            margin-left: 50px;
+            flex-grow: 1;
           "
         >
           <div
@@ -401,6 +406,8 @@
         lb.innerHTML = "";
 
         const users = await fetchSheetData();
+        // Sort theo chuỗi giảm dần
+        users.sort((a, b) => b.streak - a.streak);
 
         users.forEach((user) => {
           const slugName = toSlug(user.name);
