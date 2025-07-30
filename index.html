@@ -174,34 +174,7 @@
           <span id="speedValue" class="value">1x</span>
         </button>
       </div>
-      <div id="leaderboard" class="daily-leaderboard">
-        <div class="rank rank-1">
-          <div class="medal">🥇 Người bản xứ</div>
-          <div class="avatars">
-            <img src="img-user/loan.jpg" class="avatar" />
-            <img src="img-user/truc.jpg" class="avatar" />
-            <img src="img-user/linh.jpg" class="avatar" />
-
-            <!-- <img src="img-user/chip.jpg" class="avatar" /> -->
-          </div>
-        </div>
-
-        <div class="rank rank-2">
-          <div class="medal">🥈 Cũng rất là bản xứ á</div>
-          <div class="avatars">
-            <img src="img-user/lan.jpg" class="avatar" />
-            <img src="img-user/nghi.jpg" class="avatar" />
-          </div>
-        </div>
-
-        <div class="rank rank-3">
-          <div class="medal">🥉 Tại nay hơi lười thôi cưng 😅</div>
-          <div class="avatars">
-            <img src="img-user/hoa.jpg" class="avatar" />
-            <img src="img-user/long.jpg" class="avatar" />
-          </div>
-        </div>
-      </div>
+      <div id="leaderboard" class="daily-leaderboard"></div>
     </div>
 
     <script>
@@ -332,6 +305,78 @@
 
       const playBtn = document.getElementById("playBtn");
       const progress = document.getElementById("progress");
+
+      const sheetId = "1Co3Z7cUfXhgWcmPcQYvzAfYPn8W9n5cOGIWFkRsZoK4";
+      const sheetName = "Sheet1";
+      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=${sheetName}`;
+
+      // Xóa dấu tiếng Việt, viết thường, không khoảng trắng
+      function toSlug(str) {
+        return str
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/đ/g, "d")
+          .replace(/Đ/g, "D")
+          .toLowerCase()
+          .replace(/\s+/g, "");
+      }
+
+      async function fetchSheetData() {
+        const response = await fetch(url);
+        const text = await response.text();
+        const json = JSON.parse(text.substring(47).slice(0, -2));
+
+        const rows = json.table.rows.map((row) => ({
+          name: row.c[1]?.v || "",
+          streak: row.c[2]?.v || 0,
+          coins: row.c[3]?.v || 0,
+        }));
+
+        return rows;
+      }
+
+      async function renderLeaderboardFromSheet() {
+        const lb = document.getElementById("leaderboard");
+        lb.innerHTML = "";
+
+        const users = await fetchSheetData();
+
+        users.forEach((user) => {
+          const slugName = toSlug(user.name);
+          const avatarSrc = `img-user/${slugName}.jpg`;
+
+          const rankDiv = document.createElement("div");
+          rankDiv.className = "rank";
+          rankDiv.style.display = "flex";
+          rankDiv.style.alignItems = "center";
+          rankDiv.style.border = "1px solid #eee";
+          rankDiv.style.borderRadius = "8px";
+          rankDiv.style.padding = "8px 12px";
+          rankDiv.style.marginBottom = "8px";
+          rankDiv.style.background = "#fafafa";
+
+          const avatar = document.createElement("img");
+          avatar.src = avatarSrc;
+          avatar.alt = user.name;
+          avatar.style.width = "40px";
+          avatar.style.height = "40px";
+          avatar.style.borderRadius = "50%";
+          avatar.style.marginRight = "12px";
+          avatar.style.objectFit = "cover";
+
+          const infoDiv = document.createElement("div");
+          infoDiv.innerHTML = `
+      <div><strong>${user.name}</strong></div>
+      <div style="font-size: 0.9em; color: #666;">🔥 ${user.streak} ngày • 💰 ${user.coins}</div>
+    `;
+
+          rankDiv.appendChild(avatar);
+          rankDiv.appendChild(infoDiv);
+          lb.appendChild(rankDiv);
+        });
+      }
+
+      renderLeaderboardFromSheet();
 
       playBtn.onclick = () => {
         if (audio.paused) {
