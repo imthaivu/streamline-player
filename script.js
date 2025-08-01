@@ -172,8 +172,8 @@ async function renderLeaderboardFromSheet() {
     lb.innerHTML = "";
 
     const users = await fetchSheetData();
-    // Sort theo chuỗi giảm dần
-    users.sort((a, b) => b.streak - a.streak);
+    // Sort theo coins giảm dần
+    users.sort((a, b) => b.coins - a.coins);
 
     users.forEach((user) => {
         const slugName = toSlug(user.name);
