@@ -173,6 +173,26 @@ async function renderLeaderboardFromSheet() {
     const lb = document.getElementById("leaderboard");
     lb.innerHTML = "";
 
+    // Thêm dòng tiêu đề
+    const headerRow = document.createElement("div");
+    headerRow.style.display = "flex";
+    headerRow.style.justifyContent = "space-between";
+    headerRow.style.alignItems = "center";
+    headerRow.style.marginBottom = "8px";
+    headerRow.style.fontWeight = "bold";
+    headerRow.style.fontSize = "14px";
+    headerRow.style.color = "#2d3436";
+
+    const leftHeader = document.createElement("div");
+    leftHeader.textContent = "🏅 Rank of week";
+
+    const rightHeader = document.createElement("div");
+    rightHeader.textContent = "💰 Total Coins";
+
+    headerRow.appendChild(leftHeader);
+    headerRow.appendChild(rightHeader);
+    lb.appendChild(headerRow);
+
     const users = await fetchSheetData();
 
     if (users.every(u => u.balanceOfWeek === 0)) {
@@ -181,15 +201,21 @@ async function renderLeaderboardFromSheet() {
         users.sort((a, b) => b.balanceOfWeek - a.balanceOfWeek);
     }
 
-
-    users.forEach((user) => {
+    users.forEach((user, index) => {
         const slugName = toSlug(user.name);
         const avatarSrc = `img-user/${slugName}.jpg`;
-        const container = document.createElement("div");
 
+        const container = document.createElement("div");
         container.style.display = "flex";
         container.style.alignItems = "center";
         container.style.marginBottom = "12px";
+
+        // Tạo avatar wrapper
+        const avatarWrapper = document.createElement("div");
+        avatarWrapper.style.position = "relative";
+        avatarWrapper.style.width = "40px";
+        avatarWrapper.style.height = "40px";
+        avatarWrapper.style.marginRight = "5px";
 
         const avatar = document.createElement("img");
         avatar.src = avatarSrc;
@@ -197,9 +223,35 @@ async function renderLeaderboardFromSheet() {
         avatar.style.width = "40px";
         avatar.style.height = "40px";
         avatar.style.borderRadius = "50%";
-        avatar.style.marginRight = "5px";
         avatar.style.objectFit = "cover";
+        avatar.style.display = "block";
 
+        // Thêm vương miện hoặc huy chương
+        if (index === 0) {
+            const crown = document.createElement("div");
+            crown.textContent = "👑";
+            crown.style.position = "absolute";
+            crown.style.top = "-12px";
+            crown.style.left = "50%";
+            crown.style.transform = "translateX(-50%)";
+            crown.style.color = "#ffd700";
+            crown.style.fontSize = "16px";
+            avatarWrapper.appendChild(crown);
+        } else if (index === 1 || index === 2) {
+            const medal = document.createElement("div");
+            medal.textContent = index === 1 ? "🥈" : "🥉";
+            medal.style.position = "absolute";
+            medal.style.bottom = "-12px";
+            medal.style.left = "50%";
+            medal.style.transform = "translateX(-50%)";
+            medal.style.fontSize = "16px";
+            avatarWrapper.appendChild(medal);
+        }
+
+        avatarWrapper.appendChild(avatar);
+        container.appendChild(avatarWrapper);
+
+        // Tạo phần nội dung
         const content = document.createElement("div");
         content.style.flexGrow = "1";
 
@@ -210,19 +262,18 @@ async function renderLeaderboardFromSheet() {
         nameDiv.style.fontSize = "14px";
         nameDiv.style.marginBottom = "4px";
 
-        // Bên trái: tên và số dư tuần
         const nameLeft = document.createElement("div");
         nameLeft.innerHTML = `<strong>${user.name}</strong> • 💰${user.balanceOfWeek}`;
 
-        // Bên phải: tổng tích lũy
         const nameRight = document.createElement("div");
-        nameRight.innerHTML = `Total 💰  ${user.totalBalance}`;
-        nameRight.style.color = "#e17055";
-        nameRight.style.fontWeight = "600";
+        nameRight.innerHTML = `${user.totalBalance}`;
+        nameRight.style.color = "#ffcc00ff";
+        nameRight.style.fontWeight = "800";
 
         nameDiv.appendChild(nameLeft);
         nameDiv.appendChild(nameRight);
 
+        // Tạo thanh bar tiến độ
         const barContainer = document.createElement("div");
         barContainer.style.background = "#eee";
         barContainer.style.height = "10px";
@@ -233,9 +284,8 @@ async function renderLeaderboardFromSheet() {
         barContainer.style.width = "100%";
 
         const barFill = document.createElement("div");
-        const percent = Math.min((user.balanceOfWeek / 100) * 100, 100);
+        const percent = Math.min((user.balanceOfWeek / 180) * 100, 100);
         barFill.style.width = `${percent}%`;
-
         barFill.style.height = "100%";
         barFill.style.background = "linear-gradient(to right, orange, red)";
         barFill.style.transition = "width 0.3s";
@@ -255,7 +305,6 @@ async function renderLeaderboardFromSheet() {
         content.appendChild(nameDiv);
         content.appendChild(barContainer);
 
-        container.appendChild(avatar);
         container.appendChild(content);
 
         lb.appendChild(container);
@@ -263,6 +312,7 @@ async function renderLeaderboardFromSheet() {
 }
 
 renderLeaderboardFromSheet();
+
 
 
 playBtn.onclick = () => {
