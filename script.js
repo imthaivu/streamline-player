@@ -178,7 +178,7 @@ async function renderLeaderboardFromSheet() {
     headerRow.style.display = "flex";
     headerRow.style.justifyContent = "space-between";
     headerRow.style.alignItems = "center";
-    headerRow.style.marginBottom = "8px";
+    headerRow.style.marginBottom = "12px";
     headerRow.style.fontWeight = "bold";
     headerRow.style.fontSize = "14px";
     headerRow.style.color = "#2d3436";
@@ -223,6 +223,10 @@ async function renderLeaderboardFromSheet() {
         avatar.style.width = "40px";
         avatar.style.height = "40px";
         avatar.style.borderRadius = "50%";
+        if (index <= 2) {
+            avatar.style.boxShadow = "0 0 4px 2px rgba(255, 204, 0, 0.6)";
+        }
+
         avatar.style.objectFit = "cover";
         avatar.style.display = "block";
 
@@ -263,7 +267,7 @@ async function renderLeaderboardFromSheet() {
         nameDiv.style.marginBottom = "4px";
 
         const nameLeft = document.createElement("div");
-        nameLeft.innerHTML = `<strong>${user.name}</strong> • 💰${user.balanceOfWeek}`;
+        nameLeft.innerHTML = `<strong>${user.name}</strong> `;
 
         const nameRight = document.createElement("div");
         nameRight.innerHTML = `${user.totalBalance}`;
@@ -284,10 +288,15 @@ async function renderLeaderboardFromSheet() {
         barContainer.style.width = "100%";
 
         const barFill = document.createElement("div");
-        const percent = Math.min((user.balanceOfWeek / 180) * 100, 100);
+        const percent = Math.min((user.balanceOfWeek / 150) * 100, 100);
         barFill.style.width = `${percent}%`;
         barFill.style.height = "100%";
-        barFill.style.background = "linear-gradient(to right, orange, red)";
+        barFill.style.background =
+            index === 0 ? "linear-gradient(to right, gold, orange)" :
+                index === 1 ? "linear-gradient(to right, silver, gray)" :
+                    index === 2 ? "linear-gradient(to right, #cd7f32, #8e44ad)" :
+                        "linear-gradient(to right, #74b9ff, #0984e3)";
+
         barFill.style.transition = "width 0.3s";
 
         const label = document.createElement("div");
