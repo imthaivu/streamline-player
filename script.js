@@ -159,27 +159,34 @@ async function fetchSheetData() {
     const json = JSON.parse(text.substring(47).slice(0, -2));
 
     const rows = json.table.rows.map((row) => ({
+        id: row.c[0]?.v || "",
         name: row.c[1]?.v || "",
-        streak: row.c[2]?.v || 0,
-        coins: row.c[3]?.v || 0,
+        balanceOfWeek: parseFloat(row.c[2]?.v || 0),
+        totalBalance: parseFloat(row.c[3]?.v || 0),
     }));
 
     return rows;
 }
+
 
 async function renderLeaderboardFromSheet() {
     const lb = document.getElementById("leaderboard");
     lb.innerHTML = "";
 
     const users = await fetchSheetData();
-    // Sort theo coins giảm dần
-    users.sort((a, b) => b.coins - a.coins);
+
+    if (users.every(u => u.balanceOfWeek === 0)) {
+        users.sort(() => Math.random() - 0.5);
+    } else {
+        users.sort((a, b) => b.balanceOfWeek - a.balanceOfWeek);
+    }
+
 
     users.forEach((user) => {
         const slugName = toSlug(user.name);
         const avatarSrc = `img-user/${slugName}.jpg`;
-
         const container = document.createElement("div");
+
         container.style.display = "flex";
         container.style.alignItems = "center";
         container.style.marginBottom = "12px";
@@ -203,13 +210,13 @@ async function renderLeaderboardFromSheet() {
         nameDiv.style.fontSize = "14px";
         nameDiv.style.marginBottom = "4px";
 
-        // Bên trái: tên và coins
+        // Bên trái: tên và số dư tuần
         const nameLeft = document.createElement("div");
-        nameLeft.innerHTML = `<strong>${user.name}</strong> • 💰${user.coins}`;
+        nameLeft.innerHTML = `<strong>${user.name}</strong> • 💰${user.balanceOfWeek}`;
 
-        // Bên phải: chuỗi ngày 🔥
+        // Bên phải: tổng tích lũy
         const nameRight = document.createElement("div");
-        nameRight.innerHTML = `chuỗi 🔥 ${user.streak}`;
+        nameRight.innerHTML = `Total 💰  ${user.totalBalance}`;
         nameRight.style.color = "#e17055";
         nameRight.style.fontWeight = "600";
 
@@ -226,14 +233,15 @@ async function renderLeaderboardFromSheet() {
         barContainer.style.width = "100%";
 
         const barFill = document.createElement("div");
-        const percent = Math.min((user.coins / 250) * 100, 100);
+        const percent = Math.min((user.balanceOfWeek / 100) * 100, 100);
         barFill.style.width = `${percent}%`;
+
         barFill.style.height = "100%";
         barFill.style.background = "linear-gradient(to right, orange, red)";
         barFill.style.transition = "width 0.3s";
 
         const label = document.createElement("div");
-        label.innerHTML = `🔥 ${user.streak}`;
+        label.innerHTML = `🔥 ${user.totalBalance}`;
         label.style.position = "absolute";
         label.style.left = "5px";
         label.style.top = "-18px";
@@ -255,6 +263,7 @@ async function renderLeaderboardFromSheet() {
 }
 
 renderLeaderboardFromSheet();
+
 
 playBtn.onclick = () => {
     if (audio.paused) audio.play();
