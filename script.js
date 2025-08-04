@@ -184,10 +184,10 @@ async function renderLeaderboardFromSheet() {
     headerRow.style.color = "#2d3436";
 
     const leftHeader = document.createElement("div");
-    leftHeader.textContent = "🏅 Rank of week";
+    leftHeader.textContent = "Rank of week";
 
     const rightHeader = document.createElement("div");
-    rightHeader.textContent = "💰 Total Coins";
+    rightHeader.textContent = "Total Coins";
 
     headerRow.appendChild(leftHeader);
     headerRow.appendChild(rightHeader);
@@ -270,9 +270,9 @@ async function renderLeaderboardFromSheet() {
         nameLeft.innerHTML = `<strong>${user.name}</strong> `;
 
         const nameRight = document.createElement("div");
-        nameRight.innerHTML = `${user.totalBalance}`;
+        nameRight.innerHTML = `${user.totalBalance} 💰`;
         nameRight.style.color = "#ffcc00ff";
-        nameRight.style.fontWeight = "800";
+        nameRight.style.fontWeight = "bold";
 
         nameDiv.appendChild(nameLeft);
         nameDiv.appendChild(nameRight);
@@ -299,16 +299,29 @@ async function renderLeaderboardFromSheet() {
 
         barFill.style.transition = "width 0.3s";
 
+        // Thêm số balanceOfWeek ở bên phải thanh barFill
+        const barValue = document.createElement("div");
+        barValue.textContent = `${user.balanceOfWeek}`;
+        barValue.style.position = "absolute";
+        barValue.style.left = `calc(${percent}% + 4px)`; // ngay sau phần barFill
+        barValue.style.top = "50%";
+        barValue.style.transform = "translateY(-50%)";
+        barValue.style.fontSize = "12px";
+        barValue.style.color = "#ff5e00ff";
+        barValue.style.fontWeight = "bold";
+
         const label = document.createElement("div");
         label.innerHTML = `🔥 ${user.totalBalance}`;
         label.style.position = "absolute";
         label.style.left = "5px";
         label.style.top = "-18px";
         label.style.fontSize = "12px";
-        label.style.color = "#e17055";
+        label.style.color = "#ff5e00ff";
         label.style.fontWeight = "600";
 
         barContainer.appendChild(barFill);
+        barContainer.appendChild(barValue);
+
         barContainer.appendChild(label);
 
         content.appendChild(nameDiv);
