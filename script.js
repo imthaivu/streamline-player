@@ -85,18 +85,21 @@ async function playAudio(index) {
     currentIndex = index;
     const file = audioFiles[currentBook][index];
 
+    // Cập nhật src mới
+    audio.src = file;
+
     // Reset tốc độ
     audio.playbackRate = 1;
     speedIcon.textContent = "🐇";
     speedValue.textContent = "1x";
 
-
-    audio.load();
-    audio.play();
+    await audio.load();
+    await audio.play();
 
     updateActiveButton(index);
     saveLastAudio();
 }
+
 
 
 
