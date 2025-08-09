@@ -13,6 +13,29 @@ body {
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
+select {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 2px solid #0984e3;
+  border-radius: 6px;
+  background-color: #f0f8ff;
+  color: #0984e3;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  min-width: 140px;
+}
+
+select:hover {
+  border-color: #74b9ff;
+  box-shadow: 0 0 8px rgba(116, 185, 255, 0.6);
+}
+
+select:focus {
+  outline: none;
+  border-color: #0984e3;
+  box-shadow: 0 0 10px rgba(9, 132, 227, 0.8);
+  background-color: #d6eaff;
+}
 
 h2 {
   text-align: center;
