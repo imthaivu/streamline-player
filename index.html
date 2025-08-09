@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>🎧 Streamline Player</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/png" href="/icon.jpg" />
   </head>
   <body>
     <div class="container">
@@ -121,8 +122,19 @@
 
       <div id="leaderboard"></div>
     </div>
-
+    <!-- Thêm thư viện IndexedDB helper -->
+    <script src="https://cdn.jsdelivr.net/npm/idb@8/build/umd.js"></script>
     <script src="./script.js"></script>
+
+    <!-- Đăng ký Service Worker -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/service-worker.js")
+          .then(() => console.log("Service Worker registered"))
+          .catch((err) => console.error("SW registration failed:", err));
+      }
+    </script>
   </body>
 </html>
 
