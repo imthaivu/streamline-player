@@ -127,19 +127,7 @@
 
       <div id="leaderboard"></div>
     </div>
-    <!-- Thêm thư viện IndexedDB helper -->
-    <script src="https://cdn.jsdelivr.net/npm/idb@8/build/umd.js"></script>
     <script src="./script.js"></script>
-
-    <!-- Đăng ký Service Worker -->
-    <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker
-          .register("/service-worker.js")
-          .then(() => console.log("Service Worker registered"))
-          .catch((err) => console.error("SW registration failed:", err));
-      }
-    </script>
   </body>
 </html>
 

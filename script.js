@@ -90,65 +90,18 @@ async function playAudio(index) {
     speedIcon.textContent = "🐇";
     speedValue.textContent = "1x";
 
-    let blobUrl;
-    let blob = await getAudioFromDB(file);
 
-    if (!blob) {
-        // Nếu chưa có trong DB → tải và lưu
-        try {
-            const response = await fetch(file);
-            blob = await response.blob();
-            await saveAudioFIFO(file, blob, 50); // Giới hạn 50MB
-        } catch (err) {
-            console.error("Không tải được file:", err);
-            return;
-        }
-    }
-
-    blobUrl = URL.createObjectURL(blob);
-    audio.src = blobUrl;
     audio.load();
     audio.play();
 
     updateActiveButton(index);
     saveLastAudio();
 }
-// Mở DB
-const dbPromise = idb.openDB("audioDB", 1, {
-    upgrade(db) {
-        if (!db.objectStoreNames.contains("audios")) {
-            db.createObjectStore("audios", { keyPath: "url" });
-        }
-    }
-});
 
-// Lưu audio, FIFO khi quá 50MB
-async function saveAudioFIFO(url, blob, maxSizeMB = 50) {
-    const db = await dbPromise;
-    await db.put("audios", { url, blob, time: Date.now() });
 
-    // Kiểm tra dung lượng
-    let totalSize = 0;
-    const all = await db.getAll("audios");
-    all.sort((a, b) => a.time - b.time);
 
-    for (let f of all) {
-        totalSize += f.blob.size / (1024 * 1024);
-    }
 
-    while (totalSize > maxSizeMB && all.length > 0) {
-        const oldest = all.shift();
-        await db.delete("audios", oldest.url);
-        totalSize -= oldest.blob.size / (1024 * 1024);
-    }
-}
 
-// Lấy audio từ IndexedDB
-async function getAudioFromDB(url) {
-    const db = await dbPromise;
-    const item = await db.get("audios", url);
-    return item ? item.blob : null;
-}
 
 
 function seekAudio(seconds) {
